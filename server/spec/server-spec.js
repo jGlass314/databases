@@ -16,11 +16,11 @@ describe('Persistent Node Chat Server', function() {
     });
     dbConnection.connect();
 
-       var tablename = ""; // TODO: fill this out
-
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query('truncate ' + tablename, done);
+    ['rooms', 'names', 'messages'].forEach((tablename) => {
+      dbConnection.query('truncate ' + tablename, done);
+    });
   });
 
   afterEach(function() {
