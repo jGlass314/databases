@@ -10,7 +10,7 @@ module.exports = {
                           join users u on (m.user_id_fk = u.id);`;
         var queryArgs = [];
         db.dbConnection.query(queryString, queryArgs, function(err, results) {
-          if(err) {
+          if (err) {
             reject(err);
             return;
           }
@@ -37,14 +37,14 @@ module.exports = {
       var queryInserMessageArgs = [messageObj.message, messageObj.user, messageObj.room];
       Promise.all([
         db.dbConnection.query(queryInsertUser, queryInsertUserArgs, function(err, results) {
-          if(err) {
+          if (err) {
             reject(err);
           } else {
             resolve(results);
           }
         }),
         db.dbConnection.query(queryInsertRoom, queryInsertRoomArgs, function(err, results) {
-          if(err) {
+          if (err) {
             reject(err);
           } else {
             resolve(results);
@@ -54,7 +54,7 @@ module.exports = {
         // promise
         new Promise((resolve, reject) => {
           db.dbConnection.query(queryInsertMessage, queryInserMessageArgs, function(err, results) {
-            if(err) {
+            if (err) {
               reject(err);
             } else {
               resolve(results);

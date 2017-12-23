@@ -9,6 +9,6 @@ var dbConnection = mysql.createConnection({
   password: '',
   database: 'chat'
 });
-dbConnection.connect();  // synchronous??
+dbConnection.connect(); // synchronous??
 
 module.exports.dbConnection;
