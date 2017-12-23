@@ -5,12 +5,12 @@ USE chat;
 
 CREATE TABLE if not exists rooms (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name varchar(16) not null
+  name varchar(16) not null UNIQUE
 ) ENGINE=InnoDB;
 
-CREATE TABLE if not exists names (
+CREATE TABLE if not exists users (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name varchar(16) not null
+  name varchar(16) not null UNIQUE
 ) ENGINE=InnoDB;
 
 CREATE TABLE if not exists messages (
@@ -19,9 +19,9 @@ CREATE TABLE if not exists messages (
   timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   text varchar(255) not null,
   room_id_fk int,
-  name_id_fk int not null,
-  FOREIGN KEY(room_id) REFERENCES rooms(id),
-  FOREIGN KEY(name_id) REFERENCES names(id)
+  user_id_fk int not null,
+  FOREIGN KEY(room_id_fk) REFERENCES rooms(id),
+  FOREIGN KEY(user_id_fk) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 /* Create other tables and define schemas for them here! */
