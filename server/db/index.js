@@ -9,6 +9,11 @@ var dbConnection = mysql.createConnection({
   password: '',
   database: 'chat'
 });
-dbConnection.connect(); // synchronous??
+dbConnection.connect(function(err) {
+  if (err) {
+    throw err;
+  }
+  console.log("Connected!");
+}); // synchronous??
 
-module.exports.dbConnection;
+module.exports.dbConnection = dbConnection;

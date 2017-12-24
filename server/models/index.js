@@ -3,14 +3,17 @@ var db = require('../db');
 module.exports = {
   messages: {
     // a function which produces all the messages
-    get: function () {
+    get: function (callback) {
+      console.log('model get...');
       new Promise((resolve, reject) => {
         var queryString = `SELECT m.text text, r.name roomname, u.name username
                           from messages m join rooms r on (m.room_id_fk = r.id)
                           join users u on (m.user_id_fk = u.id);`;
         var queryArgs = [];
+        // console.log('db module:', db);
         db.dbConnection.query(queryString, queryArgs, function(err, results) {
           if (err) {
+            console.error('error on query:', queryString);
             reject(err);
             return;
           }
@@ -18,8 +21,9 @@ module.exports = {
         });
       }).then(results => {
         console.log('results on get:', JSON.stringify(results));
-        return results;
+        callback(results);
       }).catch(err => {
+        console.error('Error:', err);
         throw new Error(err);
       });
     },

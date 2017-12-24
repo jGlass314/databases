@@ -13,15 +13,15 @@ app.renderChats = function(data, $root, refreshRate, messageLimit, roomName) {
     }
     rooms[roomname].push(message);
   });
-  
+
   if (!roomName) {
     var roomNames = Object.keys(rooms).sort();
     var $roomSelector = $('.roomSelector');
-    
+
     $roomSelector.children().remove();
     roomNames.forEach((room) => {
       $roomSelector.append('<option value=\"' + room + '\">' + room + '</option>');
-    }); 
+    });
   }
 
   if (messageArray.length === 0 ||
@@ -87,13 +87,13 @@ app.init = function(url, refreshRate, messageLimit) {
   const $root = $('#chats');
   app.URL = url;
   app.fetch(app.URL, app.renderChats, $root, refreshRate, messageLimit);
-  
+
   $(document).ajaxStop(function() {
     setTimeout(function() {
       app.fetch(app.URL, app.renderChats, $root, refreshRate, messageLimit);
     }, refreshRate);
   });
-  
+
   $('body').on('click', '.friendLink', function(event) {
     if (app.currentFriend) {
       $(`.${app.currentFriend}`).css('font-weight', 'normal');
@@ -101,7 +101,7 @@ app.init = function(url, refreshRate, messageLimit) {
     app.currentFriend = $(this).text().slice(2);
     $(`.${app.currentFriend}`).css('font-weight', 'bold');
   });
-  
+
   $('.roomSelector').on('change', function(event) {
     event.preventDefault();
     app.currentRoom = $('.roomSelector').val();
@@ -110,10 +110,10 @@ app.init = function(url, refreshRate, messageLimit) {
     }
     app.fetch(app.URL, app.renderChats, $root, refreshRate, messageLimit, app.currentRoom);
   });
-  
+
   $('#messageSubmit').on('submit', function(event) {
     event.preventDefault();
-    
+
     var $messageNode = $('.textBox');
     var $roomNode = $('.roomBox');
     var urlVars = app.getUrlVars();
@@ -122,7 +122,7 @@ app.init = function(url, refreshRate, messageLimit) {
       text: $messageNode.val(),
       roomname: $roomNode.val()
     };
-    
+
     app.send(message);
     $('.textBox').val('');
     $('.roomBox').val('');
@@ -146,10 +146,11 @@ app.send = function(message) {
 
 app.fetch = function(url, renderFunction, ...args) {
   var roomName = args[3];
-  var data = {'order': '-createdAt' };
-  if (roomName !== undefined) {
-    data['where'] = JSON.stringify({'roomname': roomName});
-  }
+  data = {};
+  // var data = {'order': '-createdAt' };
+  // if (roomName !== undefined) {
+  //   data['where'] = JSON.stringify({'roomname': roomName});
+  // }
   $.get(url, data, function (messageData) {
     renderFunction(messageData, ...args);
   });
@@ -160,15 +161,15 @@ app.clearMessages = function() {
 };
 
 app.renderMessage = function(message, $node, roomName) {
-  
+
   $node = $node || $('#chats');
-  
+
   var createdAt = app.filterMessage(message.createdAt);
   var roomName = app.filterMessage(message.roomname);
   var text = app.filterMessage(message.text);
   var username = app.filterMessage(message.username).replace('%20', ' ');
   var createdAt = app.filterMessage(message.createdAt);
-  
+
   if (username !== '' && text !== '') {
     $node.append(`<div class="message" id="${createdAt}">
     <div class="${username} messageText">${text}</div>
@@ -178,8 +179,8 @@ app.renderMessage = function(message, $node, roomName) {
   }
 };
 
-const URL = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
-const REFRESH_RATE = 4000;
+// const URL = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
+const URL = '/classes/messages';
+const REFRESH_RATE = 40000;
 const MESSAGE_LIMIT = 20;
 app.init(URL, REFRESH_RATE, MESSAGE_LIMIT);
-
