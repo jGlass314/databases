@@ -25,7 +25,7 @@ app.renderChats = function(data, $root, refreshRate, messageLimit, roomName) {
   }
 
   if (messageArray.length === 0 ||
-    tmpArray[0].createdAt > messageArray[0].createdAt ||
+    (tmpArray.length && tmpArray[0].createdAt > messageArray[0].createdAt) ||
     roomName !== undefined) {
     // refresh message set
     if (roomName === undefined) {
@@ -86,11 +86,11 @@ app.getUrlVars = function() {
 app.init = function(url, refreshRate, messageLimit) {
   const $root = $('#chats');
   app.URL = url;
-  app.fetch(app.URL, app.renderChats, $root, refreshRate, messageLimit);
+  app.fetch(app.URL, app.renderChats, $root, messageLimit);
 
   $(document).ajaxStop(function() {
     setTimeout(function() {
-      app.fetch(app.URL, app.renderChats, $root, refreshRate, messageLimit);
+      app.fetch(app.URL, app.renderChats, $root, messageLimit);
     }, refreshRate);
   });
 
@@ -108,7 +108,7 @@ app.init = function(url, refreshRate, messageLimit) {
     if (app.currentRoom === ' ') {
       app.currentRoom = undefined;
     }
-    app.fetch(app.URL, app.renderChats, $root, refreshRate, messageLimit, app.currentRoom);
+    app.fetch(app.URL, app.renderChats, $root, messageLimit, app.currentRoom);
   });
 
   $('#messageSubmit').on('submit', function(event) {
@@ -127,25 +127,34 @@ app.init = function(url, refreshRate, messageLimit) {
     $('.textBox').val('');
     $('.roomBox').val('');
   });
-
 };
 
 app.send = function(message) {
+  console.log('send message', message);
+  console.log('send JSON.stringify(message)', JSON.stringify(message));
   $.ajax({
     url: app.URL,
     type: 'POST',
-    data: message,
-    success: function() {
+    data: JSON.stringify(message)
+    // success: function() {
+    //   console.log('message submitted.');
+    //   app.fetch(app.URL, app.renderChats, $('#chats'), messageLimit);
+    // },
+    // error: function(e) {
+    //   console.log('message send failure:', e);
+    // }
+  })
+    .done((data) => {
       console.log('message submitted.');
-    },
-    fail: function(e) {
-      console.log('message send failure:', e);
-    }
-  });
+      app.fetch(app.URL, app.renderChats, $('#chats'), 20);
+    })
+    .fail((jqXHR, textStatus, errorThrown) => {
+      console.log('message send failure:', errorThrown);
+    });
 };
 
 app.fetch = function(url, renderFunction, ...args) {
-  var roomName = args[3];
+  var roomName = args[2];
   data = {};
   // var data = {'order': '-createdAt' };
   // if (roomName !== undefined) {
