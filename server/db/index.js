@@ -13,7 +13,7 @@ dbConnection.connect(function(err) {
   if (err) {
     throw err;
   }
-  console.log("Connected!");
+  console.log('Connected!');
 }); // synchronous??
 
 module.exports.dbConnection = dbConnection;
